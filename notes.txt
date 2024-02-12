@@ -1,6 +1,2 @@
 * Put try blocks on remaining input code
-* Figure out how to insert values into a json object
-* Give option to loop through questions again
-    a. Don't need to add a game, end program
-    b. Add a new game, wipe out dictionary data and start over
 * Create a file that can read all the inputs (Try to do as a jSON)

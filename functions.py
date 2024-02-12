@@ -1,4 +1,4 @@
-def input_for_game(game):
+def game_input(game):
     name = input("What game do you want to add?: ")
     system = input(f"What system did you play {name} on?: ")
     start = input("When did you start playing?: ")
@@ -16,4 +16,4 @@ def input_for_game(game):
     game["System"] = system
     game["Start Date"] = start
     game["Completed / Abandoned Date"] = end
-    game["Rating (1-5)"] = rate
+    game["Rating"] = rate
