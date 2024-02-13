@@ -1,6 +1,7 @@
 # Declare all imports
 import sqlite3
 import time 
+from datetime import date, datetime
 
 
 con = sqlite3.connect("games.db")
@@ -15,32 +16,60 @@ except sqlite3.OperationalError:
 
 
 delete = input("Do you want to reset your library? (Y/N): ")
-if delete == 'Y':
+if delete.upper() == "Y":
     confirm = input("Are you absolutely sure (will delete ALL games in library)? (Y/N): ")
-    if confirm == 'Y':
+    if confirm.upper() == 'Y':
         cur.execute('''DELETE FROM library''')
 
 # Declare list and dictionary
 library = []
 game = {}
 ask = ''
+current_date = datetime.today()
 
 
 # Prompts for game info, adds to library then clears dictionary
 while True:    
     name = input("What game do you want to add?: ")
-    system = input(f"What system did you play {name} on?: ")
+
+    while True:
+        system = input(f"What system did you play {name} on?: ")
+        if (system == 'PlayStation') or (system == 'Xbox') or (system == 'PC') or (system == 'Nintendo'):
+            break
+        else:
+            print("Please enter PlayStation, Xbox, PC, or Nintendo")
+            continue
+
+
+    #while True:
     start = input("When did you start playing?: ")
+        #start = datetime.strptime(start, '%m/%d/%y')
+        #if (start >= current_date):
+        #   print("Please enter date earlier than or equal to today")
+        #    continue
+        #else:
+        #    break
+
+
+    #while True:
     end = input("When did you finish playing?: ")
-        
+        #end = datetime.strftime(end, '%m/%d/%y')
+        #if (end <= start):
+        #    print("Please enter a date later than the start date")
+        #    continue
+        #else:
+        #    break
+
     while True:
         try:
             rate = int(input(f"What do you rate {name} 1-10?: "))
+            if 0 <= rate <= 10:
+                break
+            raise ValueError()
         except ValueError:
-            print("Please enter a number between 1 and 10")
+            print("Please enter a valid number")
             continue
-        else:
-            break
+
 
     game["Game"] = name
     game["System"] = system
