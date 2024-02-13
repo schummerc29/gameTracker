@@ -1,10 +1,6 @@
 # Declare all imports
-import json
 import sqlite3
-import time
-from os import path
-from functions import game_input
-#import pandas as pd 
+import time 
 
 
 con = sqlite3.connect("games.db")
@@ -18,8 +14,13 @@ except sqlite3.OperationalError:
     print("Library table already exists")
 
 
+delete = input("Do you want to reset your library? (Y/N): ")
+if delete == 'Y':
+    confirm = input("Are you absolutely sure (will delete ALL games in library)? (Y/N): ")
+    if confirm == 'Y':
+        cur.execute('''DELETE FROM library''')
+
 # Declare list and dictionary
-filename = 'library.json'
 library = []
 game = {}
 ask = ''
@@ -27,13 +28,37 @@ ask = ''
 
 # Prompts for game info, adds to library then clears dictionary
 while True:    
-    game_input(game)
-    library.append(game)
-    with open(filename, 'w') as json_file:
-        json.dump(library, json_file, indent=2, separators=(',', ': '))
+    name = input("What game do you want to add?: ")
+    system = input(f"What system did you play {name} on?: ")
+    start = input("When did you start playing?: ")
+    end = input("When did you finish playing?: ")
+        
+    while True:
+        try:
+            rate = int(input(f"What do you rate {name} 1-10?: "))
+        except ValueError:
+            print("Please enter a number between 1 and 10")
+            continue
+        else:
+            break
 
-    game = {}
-    print(" ")
+    game["Game"] = name
+    game["System"] = system
+    game["Start Date"] = start
+    game["Completed / Abandoned Date"] = end
+    game["Rating"] = rate
+
+    cur.execute('''
+          INSERT INTO library (Game, System, Start, End, Rate)
+            VALUES (?, ?, ?, ?, ?)''', (name, system, start, end, rate))
+
+
+    print("   ")
+    print("Adding game to library...")
+    time.sleep(3)
+    print(f"{name} has been added to your libaray!")
+    print("  ")
+    time.sleep(1)
     ask = str(input("Do you want to enter another game?: "))
     if ask == "yes":
         continue
@@ -42,38 +67,11 @@ while True:
         break
 
 
-# Open json file and review entries
-with open (filename) as f:
-    data = json.load(f)
-    print("JSON Data unloaded: ")
-    print(data)
-
-# Iterates through list of dictionaries and prints them out
-print("   ")
-print("   ")
-print("Adding data to library: ")
-for x in library:
-    print(x)
-
-# Parameterize and insert correct values in library table
-for x in library:
-    for key, value in x.items():
-        game = x["Game"]
-        system = x["System"]
-        start = x["Start Date"]
-        end = x["Completed / Abandoned Date"]
-        rate = x["Rating"]
-        cur.execute('''
-          INSERT INTO library (Game, System, Start, End, Rate)
-            VALUES (?, ?, ?, ?, ?)''', (game, system, start, end, rate))
-# Adding each game five times....need to resolve
-        
-
-
 # Fetch All distinct Rows in Library table
 statement = '''SELECT DISTINCT * FROM library'''
 cur.execute(statement)
 
+print("  ")
 print("Reading table data:")
 output = cur.fetchall()
 for row in output:
@@ -82,6 +80,7 @@ con.commit()
 
 
 # Close connection to DB
+print("   ")
 print("Closing connection...")
 try:
     con.close()

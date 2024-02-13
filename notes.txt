@@ -1,2 +1,0 @@
-* Put try blocks on remaining input code
-* Create a file that can read all the inputs (Try to do as a jSON)
