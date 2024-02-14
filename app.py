@@ -19,9 +19,18 @@ delete = input("Do you want to reset your library? (Y/N): ")
 if delete.upper() == "Y":
     confirm = input("Are you absolutely sure (will delete ALL games in library)? (Y/N): ")
     if confirm.upper() == 'Y':
-        cur.execute('''DELETE FROM library''')
+        print("Removing data...")
+        time.sleep(2)
+        try:
+            cur.execute('''DELETE FROM library''')
+        except sqlite3.OperationalError:
+            print("Error deleting data...")
+        else:
+            con.commit()
+            print("Data has been deleted")
+            print(" ")
 
-# Declare list and dictionary
+# Declare variables
 library = []
 game = {}
 ask = ''
@@ -33,7 +42,7 @@ while True:
     name = input("What game do you want to add?: ")
 
     while True:
-        system = input(f"What system did you play {name} on?: ")
+        system = input(f"Did you play {name} on PlayStation, Xbox, Nintendo, or PC?: ")
         if (system == 'PlayStation') or (system == 'Xbox') or (system == 'PC') or (system == 'Nintendo'):
             break
         else:
@@ -41,24 +50,24 @@ while True:
             continue
 
 
-    #while True:
-    start = input("When did you start playing?: ")
-        #start = datetime.strptime(start, '%m/%d/%y')
-        #if (start >= current_date):
-        #   print("Please enter date earlier than or equal to today")
-        #    continue
-        #else:
-        #    break
+    while True:
+        start = input("When did you start playing?: ")
+        start = datetime.strptime(start, '%m/%d/%y')
+        if (start >= current_date):
+            print("Please enter date earlier than or equal to today")
+            continue
+        else:
+            break
 
 
-    #while True:
-    end = input("When did you finish playing?: ")
-        #end = datetime.strftime(end, '%m/%d/%y')
-        #if (end <= start):
-        #    print("Please enter a date later than the start date")
-        #    continue
-        #else:
-        #    break
+    while True:
+        end = input("When did you finish playing?: ")
+        end = datetime.strptime(end, '%m/%d/%y')
+        if (end <= start):
+            print("Please enter a date later than the start date")
+            continue
+        else:
+            break
 
     while True:
         try:
@@ -85,14 +94,14 @@ while True:
     print("   ")
     print("Adding game to library...")
     time.sleep(3)
+    con.commit()
     print(f"{name} has been added to your libaray!")
     print("  ")
     time.sleep(1)
-    ask = str(input("Do you want to enter another game?: "))
-    if ask == "yes":
+    ask = str(input("Do you want to enter another game? (Y/N): "))
+    if ask.upper() == "Y":
         continue
     else:
-        game = {}
         break
 
 
